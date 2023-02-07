@@ -1,4 +1,4 @@
-module enforce-tool-versions
+module version-enforcer
 
 go 1.19
 

@@ -2,6 +2,12 @@
 
 This is a tool to enforce the versions of tools used in a runtime environment.
 
+## Installation
+
+```sh
+go install github.com/asimihsan/version-enforcer@0.0.2
+```
+
 ## Usage
 
 ```sh
