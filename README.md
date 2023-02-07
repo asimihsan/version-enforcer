@@ -1,6 +1,20 @@
-# version-enforcer
+<h1 align="center">
+  version-enforcer
+</h1>
 
-This is a tool to enforce the versions of tools used in a runtime environment.
+<h4 align="center">Enforce software version compliance.</h4>
+
+<p align="center">
+  <a href="#installation-example">Installation, example</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#configuration">Configuration</a> •
+  <a href="#todo">TODO</a> •
+  <a href="#license">License</a>
+</p>
+
+`version-enforcer` is a tool that enforces software version compliance. It is a
+simple tool that can be used in CI pipelines and developer hosts to ensure that
+the correct versions of software are installed.
 
 ## Installation, example
 
