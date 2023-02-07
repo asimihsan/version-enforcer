@@ -246,15 +246,16 @@ func Satisfies(version string, requirement string) bool {
 
 		// If req only has major and minor versions, then major and minor versions must match.
 		if req.Version.Patch == nil {
-			return req.Version.Major == v.Major && *req.Version.Minor == *v.Minor
+			return req.Version.Major == v.Major && (v.Minor == nil || *req.Version.Minor == *v.Minor)
 		}
 
 		// If req has all of major, minor, and patch, then the version must have the same
 		// major and minor versions, and the patch version must be greater than or equal to
 		// the patch version in the requirement.
 		return req.Version.Major == v.Major &&
-			*req.Version.Minor == *v.Minor &&
-			CompareSemverVersions(*v, req.Version) >= 0
+			(v.Minor == nil ||
+				(*req.Version.Minor == *v.Minor &&
+					CompareSemverVersions(*v, req.Version) >= 0))
 
 	case SingleConditionEqual:
 		return CompareSemverVersions(*v, req.Version) == 0

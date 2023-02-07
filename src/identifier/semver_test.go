@@ -61,6 +61,20 @@ func TestDoesSemverMatch(t *testing.T) {
 	}
 }
 
+func TestRegressionFuzzDoesSemverMatch_01(t *testing.T) {
+	actual := Satisfies("1", "~1.0")
+	if actual != true {
+		t.Errorf("Satisfies(1, ~1.0) = %t, want %t", actual, true)
+	}
+}
+
+func TestRegressionFuzzDoesSemverMatch_02(t *testing.T) {
+	actual := Satisfies("1", "~1.0.0")
+	if actual != true {
+		t.Errorf("Satisfies(1, ~1.0.0) = %t, want %t", actual, true)
+	}
+}
+
 func FuzzDoesSemverMatch(f *testing.F) {
 	// seed the corpus. each testcase is space delimited, first element is version, second is requirement.
 	for _, testcase := range []string{

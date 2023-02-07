@@ -10,3 +10,8 @@ run: $(APP_FILES)
 .PHONY: test
 test: $(APP_FILES)
 	cd src && go test -v ./...
+	cd src && go test -v ./identifier -fuzz=FuzzDoesSemverMatch -fuzztime=10s -fuzzminimizetime=10s -parallel=8
+
+.PHONY: clean
+clean:
+	cd src && go clean && rm -f $(APP_NAME)
