@@ -19,8 +19,13 @@ package identifier
 
 import (
 	"errors"
+	"regexp"
 	"strconv"
 	"strings"
+)
+
+var (
+	operatorRegex = regexp.MustCompile(`([><=]{1,2})\s*(.*)`)
 )
 
 type RequirementType int
@@ -29,10 +34,11 @@ const (
 	Exact RequirementType = iota
 	Caret
 	Tilde
-)
-
-const (
-	numbers string = "0123456789"
+	SingleConditionEqual
+	SingleConditionGreaterThan
+	SingleConditionLessThan
+	SingleConditionGreaterThanOrEqual
+	SingleConditionLessThanOrEqual
 )
 
 type Requirement struct {
@@ -101,6 +107,32 @@ func NewRequirement(s string) (*Requirement, error) {
 			Type:    Tilde,
 			Version: *version,
 		}, nil
+	}
+
+	conditionOperatorToType := map[string]RequirementType{
+		"==": SingleConditionEqual,
+		">":  SingleConditionGreaterThan,
+		"<":  SingleConditionLessThan,
+		">=": SingleConditionGreaterThanOrEqual,
+		"<=": SingleConditionLessThanOrEqual,
+	}
+
+	matches := operatorRegex.FindStringSubmatch(s)
+	if len(matches) == 3 {
+		operator := matches[1]
+		version := matches[2]
+
+		requirementType, ok := conditionOperatorToType[operator]
+		if ok {
+			version, err := ParseVersion(version)
+			if err != nil {
+				return nil, err
+			}
+			return &Requirement{
+				Type:    requirementType,
+				Version: *version,
+			}, nil
+		}
 	}
 
 	version, err := ParseVersion(s)
@@ -206,6 +238,7 @@ func Satisfies(version string, requirement string) bool {
 	switch req.Type {
 	case Exact, Caret:
 		return CompareSemverVersions(*v, req.Version) == 0
+
 	case Tilde:
 		// If req only has major version, then major versions must match.
 		if req.Version.Minor == nil && req.Version.Patch == nil {
@@ -223,6 +256,17 @@ func Satisfies(version string, requirement string) bool {
 		return req.Version.Major == v.Major &&
 			*req.Version.Minor == *v.Minor &&
 			CompareSemverVersions(*v, req.Version) >= 0
+
+	case SingleConditionEqual:
+		return CompareSemverVersions(*v, req.Version) == 0
+	case SingleConditionGreaterThan:
+		return CompareSemverVersions(*v, req.Version) > 0
+	case SingleConditionLessThan:
+		return CompareSemverVersions(*v, req.Version) < 0
+	case SingleConditionGreaterThanOrEqual:
+		return CompareSemverVersions(*v, req.Version) >= 0
+	case SingleConditionLessThanOrEqual:
+		return CompareSemverVersions(*v, req.Version) <= 0
 	}
 
 	return false

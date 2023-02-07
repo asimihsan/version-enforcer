@@ -47,11 +47,10 @@ func TestDoesSemverMatch(t *testing.T) {
 		{"2.0", "~1", false},
 		{"1.2.3", "~2", false},
 
-		// comparison requirements
-		//{"1.2.3", ">=1.2", true},
-		//{"1.2.3", ">= 1.2", true},
-		//{"1.1", ">= 1.2", false},
-		//{"1.2.3", ">= 1.2, < 1.5", true},
+		// comparison requirements, just a single > or >=
+		{"1.2.3", ">=1.2", true},
+		{"1.2.3", "> 1.2", true},
+		{"1.1", ">= 1.2", false},
 	}
 
 	for _, test := range tests {
@@ -80,6 +79,8 @@ func FuzzDoesSemverMatch(f *testing.F) {
 		"1.3 ~1",
 		"2.0 ~1",
 		"1.2.3 ~2",
+		"1.2.3 >=1.2",
+		"1.2.3 >1.2",
 	} {
 		f.Add([]byte(testcase))
 	}
