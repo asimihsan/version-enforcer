@@ -18,9 +18,9 @@
 package cmd
 
 import (
-	"enforce-tool-versions/config"
-	"enforce-tool-versions/identifier"
 	"fmt"
+	"github.com/asimihsan/version-enforcer/src/config"
+	"github.com/asimihsan/version-enforcer/src/identifier"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"os"

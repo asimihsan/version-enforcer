@@ -5,7 +5,7 @@ This is a tool to enforce the versions of tools used in a runtime environment.
 ## Installation
 
 ```sh
-go install github.com/asimihsan/version-enforcer/src@0.0.3
+go install -v github.com/asimihsan/version-enforcer/src@0.0.5
 ```
 
 ## Usage

@@ -18,8 +18,8 @@
 package config
 
 import (
-	"enforce-tool-versions/identifier"
 	"fmt"
+	"github.com/asimihsan/version-enforcer/src/identifier"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsimple"
 	"github.com/rs/zerolog"

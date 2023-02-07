@@ -17,7 +17,9 @@
 
 package main
 
-import "enforce-tool-versions/cmd"
+import (
+	"github.com/asimihsan/version-enforcer/src/cmd"
+)
 
 func main() {
 	cmd.Execute()

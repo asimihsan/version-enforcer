@@ -18,8 +18,8 @@
 package identifier
 
 import (
-	"enforce-tool-versions/command"
 	"errors"
+	"github.com/asimihsan/version-enforcer/src/command"
 	"github.com/rs/zerolog"
 	"regexp"
 	"strings"
