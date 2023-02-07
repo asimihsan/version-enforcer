@@ -21,6 +21,7 @@ import (
 	"enforce-tool-versions/command"
 	"errors"
 	"github.com/rs/zerolog"
+	"regexp"
 	"strings"
 )
 
@@ -30,24 +31,44 @@ type Program int
 const (
 	Make Program = iota
 	Git
+	Bash
+	Go
+	Protobuf
+	PkgConfig
+	Poetry
 )
 
 // SemverVersion is a string, should be lexicographically sortable (e.g. semver).
 type Version string
 
 var identifierMap = map[Program]func(string, *zerolog.Logger) (Version, error){
-	Make: identifyMake,
-	Git:  identifyGit,
+	Make:      identifyMake,
+	Git:       identifyGit,
+	Bash:      identifyBash,
+	Go:        identifyGo,
+	Protobuf:  identifyProtobuf,
+	PkgConfig: identifyPkgConfig,
+	Poetry:    identifyPoetry,
 }
 
 var programNameToProgramMap = map[string]Program{
-	"make": Make,
-	"git":  Git,
+	"make":       Make,
+	"git":        Git,
+	"bash":       Bash,
+	"go":         Go,
+	"protoc":     Protobuf,
+	"pkg-config": PkgConfig,
+	"poetry":     Poetry,
 }
 
 var programToProgramNameMap = map[Program]string{
-	Make: "make",
-	Git:  "git",
+	Make:      "make",
+	Git:       "git",
+	Bash:      "bash",
+	Go:        "go",
+	Protobuf:  "protoc",
+	PkgConfig: "pkg-config",
+	Poetry:    "poetry",
 }
 
 // GetProgram returns the Program for the given name, if found.
@@ -114,6 +135,93 @@ func identifyMake(s string, zlog *zerolog.Logger) (Version, error) {
 	return Version(word), nil
 }
 
+// identifyBash uses a regex on the first line to get the version number
+//
+// Example s:
+//
+// GNU bash, version 5.1.8(1)-release (aarch64-apple-darwin21.6.0)
+// Copyright (C) 2022 Free Software Foundation, Inc.
+// License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+//
+// This is free software; you are free to change and redistribute it.
+// There is NO WARRANTY, to the extent permitted by law.
+func identifyBash(s string, zlog *zerolog.Logger) (Version, error) {
+	regex := regexp.MustCompile(`GNU bash, version ([0-9]+\.[0-9]+\.[0-9]+)`)
+	lines := strings.Split(s, "\n")
+	if len(lines) == 0 {
+		return "", errors.New("no lines in output")
+	}
+	matches := regex.FindStringSubmatch(lines[0])
+	if len(matches) != 2 {
+		return "", errors.New("no matches")
+	}
+	return Version(matches[1]), nil
+}
+
+// identifyGo uses a regex on the first line to get the version number
+//
+// Example s:
+//
+// go version go1.17.5 darwin/arm64
+func identifyGo(s string, zlog *zerolog.Logger) (Version, error) {
+	regex := regexp.MustCompile(`go version go([0-9]+\.[0-9]+\.[0-9]+)`)
+	lines := strings.Split(s, "\n")
+	if len(lines) == 0 {
+		return "", errors.New("no lines in output")
+	}
+	matches := regex.FindStringSubmatch(lines[0])
+	if len(matches) != 2 {
+		return "", errors.New("no matches")
+	}
+	return Version(matches[1]), nil
+}
+
+// identifyProtobuf uses last word on first line
+//
+// Example s:
+//
+// libprotoc 3.19.1
+func identifyProtobuf(s string, zlog *zerolog.Logger) (Version, error) {
+	word, err := getLastWordOnFirstLine(s)
+	if err != nil {
+		zlog.Debug().Err(err).Msg("failed to get last word on first line")
+		return "", err
+	}
+	return Version(word), nil
+}
+
+// identifyPkgConfig uses last word on first line
+//
+// Example s:
+//
+// 0.29.2
+func identifyPkgConfig(s string, zlog *zerolog.Logger) (Version, error) {
+	word, err := getLastWordOnFirstLine(s)
+	if err != nil {
+		zlog.Debug().Err(err).Msg("failed to get last word on first line")
+		return "", err
+	}
+	return Version(word), nil
+}
+
+// identifyPoetry uses a regex on the first line to get the version number.
+//
+// Example s:
+//
+// Poetry (version 1.3.2)
+func identifyPoetry(s string, zlog *zerolog.Logger) (Version, error) {
+	regex := regexp.MustCompile(`Poetry \(version ([0-9]+\.[0-9]+\.[0-9]+)\)`)
+	lines := strings.Split(s, "\n")
+	if len(lines) == 0 {
+		return "", errors.New("no lines in output")
+	}
+	matches := regex.FindStringSubmatch(lines[0])
+	if len(matches) != 2 {
+		return "", errors.New("no matches")
+	}
+	return Version(matches[1]), nil
+}
+
 func getLastWordOnFirstLine(s string) (string, error) {
 	lines := strings.Split(s, "\n")
 	if len(lines) == 0 {
@@ -127,7 +235,19 @@ func getLastWordOnFirstLine(s string) (string, error) {
 }
 
 func getProgramVersionOutput(p Program, zlog *zerolog.Logger) (string, error) {
-	output, err := command.RunCommand(GetProgramName(p), "--version")
+	var name string
+	var args []string
+
+	switch p {
+	case Make, Git, Bash, Protobuf, PkgConfig, Poetry:
+		name = GetProgramName(p)
+		args = []string{"--version"}
+	case Go:
+		name = GetProgramName(p)
+		args = []string{"version"}
+	}
+
+	output, err := command.RunCommand(name, args...)
 	if err != nil {
 		zlog.Debug().Str("output", output).Err(err).Msg("failed to run command")
 		return "", err

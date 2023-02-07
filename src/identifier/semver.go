@@ -25,7 +25,14 @@ import (
 )
 
 var (
-	operatorRegex = regexp.MustCompile(`([><=]{1,2})\s*(.*)`)
+	operatorRegex           = regexp.MustCompile(`([><=]{1,2})\s*(.*)`)
+	conditionOperatorToType = map[string]RequirementType{
+		"==": SingleConditionEqual,
+		">":  SingleConditionGreaterThan,
+		"<":  SingleConditionLessThan,
+		">=": SingleConditionGreaterThanOrEqual,
+		"<=": SingleConditionLessThanOrEqual,
+	}
 )
 
 type RequirementType int
@@ -107,14 +114,6 @@ func NewRequirement(s string) (*Requirement, error) {
 			Type:    Tilde,
 			Version: *version,
 		}, nil
-	}
-
-	conditionOperatorToType := map[string]RequirementType{
-		"==": SingleConditionEqual,
-		">":  SingleConditionGreaterThan,
-		"<":  SingleConditionLessThan,
-		">=": SingleConditionGreaterThanOrEqual,
-		"<=": SingleConditionLessThanOrEqual,
 	}
 
 	matches := operatorRegex.FindStringSubmatch(s)

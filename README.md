@@ -22,6 +22,11 @@ binary "make" {
 The requirement specifications follow
 [https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html).
 
+## TODO
+
+- [ ] Add support for `library` requirements.
+- [ ] Output binary path in error messages.
+
 ## License
 
 This project is licensed under the Apache License, Version 2.0. See
