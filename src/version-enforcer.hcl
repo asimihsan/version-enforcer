@@ -1,4 +1,4 @@
-binary bash {
+binary "bash" {
   version = ">= 4.4"
 }
 
