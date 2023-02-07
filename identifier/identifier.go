@@ -19,7 +19,7 @@ package identifier
 
 import (
 	"errors"
-	"github.com/asimihsan/version-enforcer/src/command"
+	"github.com/asimihsan/version-enforcer/command"
 	"github.com/rs/zerolog"
 	"regexp"
 	"strings"

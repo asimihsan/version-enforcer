@@ -19,7 +19,7 @@ package config
 
 import (
 	"fmt"
-	"github.com/asimihsan/version-enforcer/src/identifier"
+	"github.com/asimihsan/version-enforcer/identifier"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsimple"
 	"github.com/rs/zerolog"

@@ -19,8 +19,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/asimihsan/version-enforcer/src/config"
-	"github.com/asimihsan/version-enforcer/src/identifier"
+	"github.com/asimihsan/version-enforcer/config"
+	"github.com/asimihsan/version-enforcer/identifier"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"os"

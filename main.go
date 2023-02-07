@@ -18,7 +18,7 @@
 package main
 
 import (
-	"github.com/asimihsan/version-enforcer/src/cmd"
+	"github.com/asimihsan/version-enforcer/cmd"
 )
 
 func main() {

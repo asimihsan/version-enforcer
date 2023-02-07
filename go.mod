@@ -1,4 +1,4 @@
-module github.com/asimihsan/version-enforcer/src
+module github.com/asimihsan/version-enforcer
 
 go 1.19
 
