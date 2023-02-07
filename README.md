@@ -2,10 +2,31 @@
 
 This is a tool to enforce the versions of tools used in a runtime environment.
 
-## Installation
+## Installation, example
+
+This will install `version-enforcer` to your `GOPATH`, which by default is `~/go`.
 
 ```sh
-go install -v github.com/asimihsan/version-enforcer@0.0.7
+go install -v github.com/asimihsan/version-enforcer@0.0.8
+```
+
+Then create a config file:
+
+```sh
+tee version-enforcer.hcl <<EOF > /dev/null
+binary "git" {
+  version = "~2"
+}
+binary "make" {
+  version = "^4.2.1"
+}
+EOF
+```
+
+Finally, run `version-enforcer`:
+
+```sh
+version-enforcer --config version-enforcer.hcl
 ```
 
 ## Usage
