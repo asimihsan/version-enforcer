@@ -49,7 +49,13 @@ func LoadConfig(configPath string, zlog *zerolog.Logger) (*Config, error) {
 	}
 
 	for _, binary := range cfg.Binary {
-		_, err := identifier.NewRequirement(binary.Version)
+		_, err := identifier.GetProgram(binary.Name)
+		if err != nil {
+			zlog.Error().Err(err).Interface("binary", binary).Msg("failed to get program")
+			return nil, err
+		}
+
+		_, err = identifier.NewRequirement(binary.Version)
 		if err != nil {
 			zlog.Error().Err(err).Interface("binary", binary).Msg("failed to parse requirement")
 			return nil, err

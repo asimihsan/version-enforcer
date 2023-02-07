@@ -15,10 +15,14 @@
  *
  */
 
-package main
+package cmd
 
-import "enforce-tool-versions/cmd"
+var (
+	cfgFile string
+	verbose bool
+)
 
-func main() {
-	cmd.Execute()
+func init() {
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (e.g. tool-enforce.hcl)")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 }
