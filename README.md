@@ -1,6 +1,28 @@
-# enforce-tool-versions
+# version-enforcer
 
 This is a tool to enforce the versions of tools used in a runtime environment.
+
+## Usage
+
+```sh
+$ version-enforcer --help
+
+Enforce tool versions
+
+Usage:
+  enforce --config <config file> [flags]
+
+Flags:
+      --config string   config file (e.g. version-enforcer.hcl)
+  -h, --help            help for enforce
+  -v, --verbose         verbose output
+```
+
+For example, you could run:
+
+```
+$ version-enforcer --config version-enforcer.hcl
+```
 
 ## Configuration
 
